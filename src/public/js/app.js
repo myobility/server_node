@@ -1,19 +1,17 @@
-const socket = new WebSocket(`ws://${window.location.host}`);
+const socket = io();
 
-function handleOpne() {
-  console.log("Connected to Server ✅");
-}
-function handleClose() {
-  console.log("Disconnection from Server ❌");
-}
-function handleMessage(message) {
-  console.log(`Server said: ${message.data}`);
+const welcome = document.getElementById("welcome");
+const form = welcome.querySelector("form");
+
+function backendDone(msg) {
+  console.log(`Server says: ${msg}`);
 }
 
-socket.addEventListener("open", handleOpne);
-socket.addEventListener("message", handleMessage);
-socket.addEventListener("close", handleClose);
+function handleRoomSubmit(event) {
+  event.preventDefault();
+  const input = form.querySelector("input");
+  socket.emit("enter_room", { payload: input.value }, backendDone);
+  input.value = "";
+}
 
-setTimeout(() => {
-  socket.send("Hello from the brower");
-}, 1000);
+form.addEventListener("submit", handleRoomSubmit);
