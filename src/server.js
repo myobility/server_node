@@ -15,7 +15,8 @@ const portNum = 3000;
 app.use(express.static(path.join(__dirname, "client", "dist")));
 app.get("/", (req, res) => {
   // res.render("home");
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
+  // res.sendFile(path.join(__dirname, "dist", "index.html"));
+  res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
 });
 app.get("/*", (req, res) => {
   res.redirect("/");
