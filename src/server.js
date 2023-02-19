@@ -16,7 +16,8 @@ app.use(express.static(path.join(__dirname, "client", "dist")));
 app.get("/", (req, res) => {
   // res.render("home");
   // res.sendFile(path.join(__dirname, "dist", "index.html"));
-  res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
+  // res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
+  res.redirect("http://localhost:5173/");
 });
 app.get("/*", (req, res) => {
   res.redirect("/");
@@ -33,6 +34,9 @@ const wsServer = new Server(httpServer, {
 });
 
 wsServer.on("connection", (socket) => {
+  socket.on("matching", ({ uid, longitude, latitude }) => {
+    socket.to(uid).emit("매칭중...");
+  });
   socket.on("join_room", (roomName) => {
     socket.join(roomName);
     socket.to(roomName).emit("welcome");
