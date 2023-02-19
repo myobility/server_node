@@ -5,14 +5,18 @@ import express from "express";
 import path from "path";
 
 const __dirname = path.resolve();
+// const express = require("express");
 const app = express();
 const portNum = 3000;
 
-app.set("view engine", "pug");
-app.set("views", __dirname + "/src/views");
-app.use("/public", express.static(__dirname + "/src/public"));
+// app.set("view engine", "pug");
+// app.set("views", __dirname + "/src/views");
+// app.use("/public", express.static(__dirname + "/src/public"));
+
+app.use(express.static(path.join(__dirname, "client", "dist")));
 app.get("/", (req, res) => {
-  res.render("home");
+  // res.render("home");
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 app.get("/*", (req, res) => {
   res.redirect("/");
@@ -39,4 +43,4 @@ wsServer.on("connection", (socket) => {
 
 const handleListen = () =>
   console.log(`Listening no http://localhost:${portNum}}`);
-httpServer.listen(3000, handleListen);
+httpServer.listen(portNum, handleListen);
