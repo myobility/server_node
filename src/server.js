@@ -5,7 +5,6 @@ import express from "express";
 import path from "path";
 
 const __dirname = path.resolve();
-// const express = require("express");
 const app = express();
 const portNum = 3000;
 
@@ -23,7 +22,13 @@ app.get("/*", (req, res) => {
 });
 
 const httpServer = http.createServer(app);
-const wsServer = new Server(httpServer);
+const wsServer = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173",
+    // allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  },
+});
 
 wsServer.on("connection", (socket) => {
   socket.on("join_room", (roomName) => {
