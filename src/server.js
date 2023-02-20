@@ -39,11 +39,11 @@ io.on("connection", (socket) => {
   socket.on("matching", (uid, location) => {
     waitingList.push({ uid: uid, socketId: socket.id, location: location });
 
-    if (waitingList.length !== 1)
-      socket.emit("matched", matchingUser(uid, location));
-    else {
+    if (waitingList.length === 1) {
       socket.join(uid);
       console.log("UID: ", uid);
+    } else {
+      socket.emit("matched", matchingUser(uid, location));
     }
     socket.emit("matching", "매칭중...");
   });
@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
     console.log("통화를 시작합니다.");
     socket.join(target_uid);
     console.log("welcome to ", target_uid);
-    io.to(target_uid).emit("welcome", target_uid);
+    socket.to(target_uid).emit("welcome", target_uid);
   });
 
   socket.on("join_room", (roomName) => {
