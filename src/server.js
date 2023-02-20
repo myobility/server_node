@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
   // res.render("home");
   res.sendFile(path.join(__dirname, "dist", "index.html"));
   // res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
-  // res.redirect("http://localhost:5173/");
+  res.redirect("http://localhost:5173/");
 });
 app.get("/*", (req, res) => {
   res.redirect("/");
@@ -38,44 +38,47 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
   socket.on("matching", (uid, location) => {
     waitingList.push({ uid: uid, socketId: socket.id, location: location });
-    socket.emit(
-      "matching",
-      `매칭하고 있습니다, 당신의 socket.id: ${socket.id}`
-    );
-    // matchingUser(uid, location);
-    socket.emit("matched", matchingUser(uid, location));
-    console.log(waitingList);
+
+    if (waitingList.length !== 1)
+      socket.emit("matched", matchingUser(uid, location));
+    else {
+      socket.join(uid);
+      console.log("UID: ", uid);
+    }
+    socket.emit("matching", "매칭중...");
+  });
+
+  socket.on("join_call", (uid, target_uid) => {
+    console.log("통화를 시작합니다.");
+    socket.join(target_uid);
+    console.log("welcome to ", target_uid);
+    io.to(target_uid).emit("welcome", target_uid);
   });
 
   socket.on("join_room", (roomName) => {
     socket.join(roomName);
-    socket.to(roomName).emit("welcome");
+    io.to(roomName).emit("welcome");
   });
 
-  socket.on("offer", (offer, roomName) => {
-    socket.to(roomName).emit("offer", offer);
+  socket.on("offer", (offer, uid, target_uid) => {
+    io.to(target_uid).emit("offer", offer);
   });
 
-  socket.on("answer", (answer, roomName) => {
-    socket.to(roomName).emit("answer", answer);
+  socket.on("answer", (answer, uid, targetUid) => {
+    io.to(targetUid).emit("answer", answer);
   });
 
-  socket.on("ice", (ice, roomName) => {
-    socket.to(roomName).emit("ice", ice);
+  socket.on("ice", (ice, uid, targetUid) => {
+    io.to(targetUid).emit("ice", ice);
   });
 });
 
-const handleListen = () =>
-  console.log(`Listening no http://localhost:${portNum}}`);
-httpServer.listen(portNum, handleListen);
-
 const matchingUser = (_uid, _location) => {
-  console.log("matchingUser");
+  //나 이외의 접속한 5KM 인근의 랜덤 유저의 정보를 리턴
   const userList = waitingList.filter(
     (item) => getDistance(item.location, _location) <= 5 && item.uid !== _uid
   );
-  return userList[parseInt((Math.random() * (userList.length - 1)).toFixed())]
-    .uid;
+  return userList[parseInt((Math.random() * (userList.length - 1)).toFixed())];
 };
 
 const getDistance = (loc1, loc2) => {
@@ -94,3 +97,7 @@ const getDistance = (loc1, loc2) => {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
+
+const handleListen = () =>
+  console.log(`Listening no http://localhost:${portNum}}`);
+httpServer.listen(portNum, handleListen);
