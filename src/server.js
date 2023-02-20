@@ -13,12 +13,12 @@ const portNum = 3000;
 
 const waitingList = [];
 
-app.use(express.static(path.join(__dirname, "client", "dist")));
+// app.use(express.static(path.join(__dirname, "client", "dist")));
 app.get("/", (req, res) => {
   // res.render("home");
   res.sendFile(path.join(__dirname, "dist", "index.html"));
-  // res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
-  res.redirect("http://localhost:5173/");
+  res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
+  // res.redirect("http://localhost:5173/");
 });
 app.get("/*", (req, res) => {
   res.redirect("/");
@@ -27,8 +27,8 @@ app.get("/*", (req, res) => {
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    // origin: "*",
-    origin: "http://localhost:5173",
+    origin: "*",
+    // origin: "http://localhost:5173",
     methods: ["GET", "POST"],
     // allowedHeaders: ["my-custom-header"],
     credentials: true,
