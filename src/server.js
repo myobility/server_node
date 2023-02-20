@@ -17,8 +17,8 @@ app.use(express.static(path.join(__dirname, "client", "dist")));
 app.get("/", (req, res) => {
   // res.render("home");
   res.sendFile(path.join(__dirname, "dist", "index.html"));
-  res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
-  // res.redirect("http://localhost:5173/");
+  // res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
+  res.redirect("http://localhost:5173/");
 });
 app.get("/*", (req, res) => {
   res.redirect("/");
@@ -27,8 +27,8 @@ app.get("/*", (req, res) => {
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
-    // origin: "http://localhost:5173",
+    // origin: "*",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST"],
     // allowedHeaders: ["my-custom-header"],
     credentials: true,
@@ -65,11 +65,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("answer", (answer, uid, targetUid) => {
-    io.to(targetUid).emit("answer", answer);
+    // io.to(targetUid).emit("answer", answer);
+    io.to(uid).emit("answer", answer);
   });
 
   socket.on("ice", (ice, uid, targetUid) => {
-    io.to(targetUid).emit("ice", ice);
+    io.to(uid).emit("ice", ice);
+    // socket.emit("ice", ice);
   });
 });
 
