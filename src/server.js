@@ -24,7 +24,7 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://web-client-luj2cle9ghnxl.sel3.cloudtype.app/",
+    origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app/",
     credentials: true,
   },
 });
