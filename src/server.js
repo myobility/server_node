@@ -41,13 +41,15 @@ io.on("connection", (socket) => {
       console.log("UID: ", uid);
     } else {
       console.log(location);
-      const target_uid = matchingUser(uid, location).uid;
-      socket.emit("matched", target_uid);
-      io.to(target_uid).emit("matched", uid);
-      //유저매칭 완료 (승인 대기)
-      waitingList = waitingList.filter(
-        (item) => item.uid !== uid && item.uid !== target_uid
-      ); // 대기열 삭제
+      const target = matchingUser(uid, location);
+      if (target !== undefined) {
+        socket.emit("matched", target.uid);
+        io.to(target_uid).emit("matched", uid);
+        //유저매칭 완료 (승인 대기)
+        waitingList = waitingList.filter(
+          (item) => item.uid !== uid && item.uid !== target.uid
+        ); // 대기열 삭제
+      }
     }
     socket.emit("matching", "매칭중...");
   });
