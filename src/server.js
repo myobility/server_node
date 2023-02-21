@@ -33,8 +33,8 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   // res.render("home");
   // res.sendFile(path.join(__dirname, "dist", "index.html"));
-  // res.redirect("https://web-client-r8xoo2mlebpgk2c.sel3.cloudtype.app/");
-  res.redirect("http://localhost:5173/");
+  res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
+  // res.redirect("http://localhost:5173/");
 });
 app.get("/*", (req, res) => {
   res.redirect("/");
@@ -43,8 +43,8 @@ app.get("/*", (req, res) => {
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    // origin: "*",
-    origin: "http://localhost:5173",
+    origin: "*",
+    // origin: "http://localhost:5173",
     methods: ["GET", "POST"],
     // allowedHeaders: ["my-custom-header"],
     credentials: true,
