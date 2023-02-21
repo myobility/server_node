@@ -8,12 +8,10 @@ const portNum = 3000;
 
 let waitingList = [];
 
-// app.use(cors());
-// app.get("/", cors(), (req, res) => {
-//   // res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
-//   // res.redirect("http://localhost:5173/");
-//   // res.redirect("/");
-// });
+app.use(cors({
+  origin: '*', 
+}));
+
 app.get("/", cors(), (req, res) => {
   res.send("cors!");
 });
@@ -25,7 +23,6 @@ const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
-    // origin: "http://localhost:5173",
     credentials: true,
   },
 });
