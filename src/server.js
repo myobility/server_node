@@ -89,7 +89,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ice", (ice, uid, targetUid) => {
-    socket.emit("ice", ice);
+    socket.to(targetUid).emit("ice", ice);
     // socket.emit("ice", ice);
   });
 
