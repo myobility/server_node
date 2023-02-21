@@ -20,12 +20,25 @@ app.get("/*", (req, res) => {
 });
 
 const httpServer = http.createServer(app);
-const io = new Server(httpServer, {
+
+
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: "*",
+//     credentials: true,
+//   },
+// });
+
+const io = require("socket.io")(httpServer, {
   cors: {
     origin: "*",
-    credentials: true,
-  },
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true
+  }
 });
+
+
 
 io.on("connection", (socket) => {
   socket.on("matching", (uid, location) => {
