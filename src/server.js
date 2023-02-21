@@ -14,6 +14,9 @@ app.get("/", cors(), (req, res) => {
   // res.redirect("http://localhost:5173/");
   res.redirect("/");
 });
+app.get("/", cors(), (req, res) => {
+  res.send("cors!");
+});
 app.get("/*", (req, res) => {
   res.redirect("/");
 });
