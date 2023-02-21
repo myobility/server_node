@@ -8,9 +8,11 @@ const portNum = 3000;
 
 let waitingList = [];
 
-app.use(cors({
-  origin: '*', 
-}));
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.get("/", cors(), (req, res) => {
   res.send("cors!");
@@ -21,16 +23,13 @@ app.get("/*", (req, res) => {
 
 const httpServer = http.createServer(app);
 
-
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
+    // origin: "http://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
+    origin: "*",
     credentials: true,
   },
 });
-
-
-
 
 io.on("connection", (socket) => {
   socket.on("matching", (uid, location) => {
