@@ -10,8 +10,9 @@ let waitingList = [];
 
 // app.use(cors());
 app.get("/", cors(), (req, res) => {
-  res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
+  // res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
   // res.redirect("http://localhost:5173/");
+  res.redirect("/");
 });
 app.get("/*", (req, res) => {
   res.redirect("/");
@@ -22,7 +23,6 @@ const io = new Server(httpServer, {
   cors: {
     origin: "*",
     // origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
     credentials: true,
   },
 });
