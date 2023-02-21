@@ -22,21 +22,15 @@ app.get("/*", (req, res) => {
 const httpServer = http.createServer(app);
 
 
-// const io = new Server(httpServer, {
-//   cors: {
-//     origin: "*",
-//     credentials: true,
-//   },
-// });
-
-const io = require("socket.io")(httpServer, {
+const io = new Server(httpServer, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["my-custom-header"],
-    credentials: true
-  }
+    origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app/*",
+    allowedHeaders: ["*"],
+    credentials: true,
+  },
 });
+
+
 
 
 
