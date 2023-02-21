@@ -12,7 +12,7 @@ const portNum = 3000;
 // app.set("views", __dirname + "/src/views");
 // app.use("/public", express.static(__dirname + "/src/public"));
 
-const waitingList = [];
+let waitingList = [];
 
 // app.use(express.static(path.join(__dirname, "client", "dist")));
 // app.use(cors());
@@ -33,8 +33,8 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   // res.render("home");
   // res.sendFile(path.join(__dirname, "dist", "index.html"));
-  res.redirect("https://web-client-r8xoo2mlebpgk2c.sel3.cloudtype.app/");
-  // res.redirect("http://localhost:5173/");
+  // res.redirect("https://web-client-r8xoo2mlebpgk2c.sel3.cloudtype.app/");
+  res.redirect("http://localhost:5173/");
 });
 app.get("/*", (req, res) => {
   res.redirect("/");
@@ -43,8 +43,8 @@ app.get("/*", (req, res) => {
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
-    // origin: "http://localhost:5173",
+    // origin: "*",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST"],
     // allowedHeaders: ["my-custom-header"],
     credentials: true,
@@ -65,10 +65,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("join_call", (uid, target_uid) => {
+    waitingList = waitingList.filter(
+      (item) => item.uid !== uid && item.uid !== target_uid
+    ); // 대기열 삭제
     console.log("통화를 시작합니다.");
-    socket.join(target_uid);
     console.log("welcome to ", target_uid);
     socket.to(target_uid).emit("welcome", target_uid);
+    socket.join(target_uid);
   });
 
   socket.on("join_room", (roomName) => {
@@ -77,17 +80,21 @@ io.on("connection", (socket) => {
   });
 
   socket.on("offer", (offer, uid, target_uid) => {
-    io.to(target_uid).emit("offer", offer);
+    socket.to(target_uid).emit("offer", offer);
   });
 
   socket.on("answer", (answer, uid, targetUid) => {
     // io.to(targetUid).emit("answer", answer);
-    io.to(uid).emit("answer", answer);
+    socket.to(targetUid).emit("answer", answer);
   });
 
   socket.on("ice", (ice, uid, targetUid) => {
-    io.to(uid).emit("ice", ice);
+    socket.emit("ice", ice);
     // socket.emit("ice", ice);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("disconnect", socket.id); // x8WIv7-mJelg7on_ALbx
   });
 });
 
