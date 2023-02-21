@@ -25,8 +25,8 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
-    // origin: "http://localhost:5173", //로컬 테스트용
+    // origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
+    origin: "http://localhost:5173", //로컬 테스트용
     credentials: true,
   },
 });
@@ -105,6 +105,9 @@ const matchingUser = (_uid, _location) => {
   //나 이외의 접속한 5KM 인근의 랜덤 유저의 정보를 리턴
   const userList = waitingList.filter(
     (item) => getDistance(item.location, _location) <= 5 && item.uid !== _uid
+  );
+  waitingList.forEach((item) =>
+    console.log(getDistance(item.location, _location) + "KM 떨어짐")
   );
   console.log(userList.length);
   return userList[parseInt((Math.random() * (userList.length - 1)).toFixed())];
