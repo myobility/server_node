@@ -1,25 +1,15 @@
 import http from "http";
 import { Server } from "socket.io";
 import express from "express";
-import path from "path";
 
-const __dirname = path.resolve();
-// const cors = require("cors");
+const cors = require("cors");
 const app = express();
 const portNum = 3000;
 
-// app.set("view engine", "pug");
-// app.set("views", __dirname + "/src/views");
-// app.use("/public", express.static(__dirname + "/src/public"));
-
 let waitingList = [];
 
-// app.use(express.static(path.join(__dirname, "client", "dist")));
-// app.use(cors());
-
+app.use(cors());
 app.get("/", (req, res) => {
-  // res.render("home");
-  // res.sendFile(path.join(__dirname, "dist", "index.html"));
   res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
   // res.redirect("http://localhost:5173/");
 });
@@ -33,7 +23,6 @@ const io = new Server(httpServer, {
     origin: "*",
     // origin: "http://localhost:5173",
     methods: ["GET", "POST"],
-    // allowedHeaders: ["my-custom-header"],
     credentials: true,
   },
 });
@@ -81,7 +70,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("disconnect", socket.id); // x8WIv7-mJelg7on_ALbx
+    console.log("disconnect", socket.id);
   });
 });
 
