@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
       const target = matchingUser(uid, location);
       if (target !== undefined) {
         socket.emit("matched", target.uid);
-        io.to(target_uid).emit("matched", uid);
+        io.to(target.uid).emit("matched", uid);
         //유저매칭 완료 (승인 대기)
         waitingList = waitingList.filter(
           (item) => item.uid !== uid && item.uid !== target.uid
