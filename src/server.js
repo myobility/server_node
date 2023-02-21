@@ -9,11 +9,11 @@ const portNum = 3000;
 let waitingList = [];
 
 // app.use(cors());
-app.get("/", cors(), (req, res) => {
-  // res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
-  // res.redirect("http://localhost:5173/");
-  res.redirect("/");
-});
+// app.get("/", cors(), (req, res) => {
+//   // res.redirect("https://web-client-luj2cle9ghnxl.sel3.cloudtype.app");
+//   // res.redirect("http://localhost:5173/");
+//   // res.redirect("/");
+// });
 app.get("/", cors(), (req, res) => {
   res.send("cors!");
 });
