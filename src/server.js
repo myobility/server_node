@@ -25,8 +25,8 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
-    // origin: "*",
+    // origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
+    origin: "http://localhost:5173", //로컬 테스트용
     credentials: true,
   },
 });
@@ -34,20 +34,42 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
   socket.on("matching", (uid, location) => {
     waitingList.push({ uid: uid, socketId: socket.id, location: location });
+    // console.log(waitingList);
 
     if (waitingList.length === 1) {
       socket.join(uid);
       console.log("UID: ", uid);
     } else {
-      socket.emit("matched", matchingUser(uid, location));
+      console.log(location);
+      const target_uid = matchingUser(uid, location).uid;
+      socket.emit("matched", target_uid);
+      io.to(target_uid).emit("matched", uid);
+      //유저매칭 완료 (승인 대기)
+      waitingList = waitingList.filter(
+        (item) => item.uid !== uid && item.uid !== target_uid
+      ); // 대기열 삭제
     }
     socket.emit("matching", "매칭중...");
+  });
+
+  socket.on("re_match", (uid, _targetUid, location) => {
+    waitingList.push({ uid: uid, socketId: socket.id, location: location });
+    // io.to(_targetUid).emit("cancel_match");
+    console.log("혅재유저 수: ", waitingList.length);
+    const target = matchingUser(uid, location);
+    console.log("Target: ", target);
+    if (target !== undefined && _targetUid !== target.uid) {
+      socket.emit("matched", target.uid);
+    } else {
+      socket.emit("matching", "매칭중...");
+    }
   });
 
   socket.on("join_call", (uid, target_uid) => {
     waitingList = waitingList.filter(
       (item) => item.uid !== uid && item.uid !== target_uid
     ); // 대기열 삭제
+    console.log("현재 사용자 수", waitingList.length);
     console.log("통화를 시작합니다.");
     console.log("welcome to ", target_uid);
     socket.to(target_uid).emit("welcome", target_uid);
@@ -75,6 +97,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("disconnect", socket.id);
+    waitingList = waitingList.filter((item) => item.socketId !== socket.id); // 대기열 삭제
   });
 });
 
@@ -83,6 +106,7 @@ const matchingUser = (_uid, _location) => {
   const userList = waitingList.filter(
     (item) => getDistance(item.location, _location) <= 5 && item.uid !== _uid
   );
+  console.log(userList.length);
   return userList[parseInt((Math.random() * (userList.length - 1)).toFixed())];
 };
 
