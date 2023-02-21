@@ -35,21 +35,20 @@ io.on("connection", (socket) => {
   socket.on("matching", (uid, location) => {
     waitingList.push({ uid: uid, socketId: socket.id, location: location });
     // console.log(waitingList);
+    const target = matchingUser(uid, location);
 
-    if (waitingList.length === 1) {
+    if (target) {
       socket.join(uid);
       console.log("UID: ", uid);
+      socket.emit("matched", uid);
     } else {
       console.log(location);
-      const target = matchingUser(uid, location);
-      if (target !== undefined) {
-        socket.emit("matched", target.uid);
-        io.to(target.uid).emit("matched", uid);
-        //유저매칭 완료 (승인 대기)
-        waitingList = waitingList.filter(
-          (item) => item.uid !== uid && item.uid !== target.uid
-        ); // 대기열 삭제
-      }
+      socket.emit("matched", target.uid);
+      io.to(target.uid).emit("matched", uid);
+      //유저매칭 완료 (승인 대기)
+      waitingList = waitingList.filter(
+        (item) => item.uid !== uid && item.uid !== target.uid
+      ); // 대기열 삭제
     }
     socket.emit("matching", "매칭중...");
   });
