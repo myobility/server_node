@@ -25,22 +25,25 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
-    // origin: "http://localhost:5173", //로컬 테스트용
+    // origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
+    origin: "http://localhost:5173", //로컬 테스트용
     credentials: true,
   },
 });
 
 io.on("connection", (socket) => {
   socket.on("matching", (uid, location) => {
+    //다중접속 방지
+    if (waitingList.filter((e) => e.socketId === socket.id).length) return;
+
     waitingList.push({ uid: uid, socketId: socket.id, location: location });
-    // console.log(waitingList);
+
     const target = matchingUser(uid, location);
 
-    if (target) {
+    if (!target) {
       socket.join(uid);
       console.log("UID: ", uid);
-      socket.emit("matched", uid);
+      // socket.emit("matched", uid);
     } else {
       console.log(location);
       socket.emit("matched", target.uid);
@@ -49,7 +52,9 @@ io.on("connection", (socket) => {
       waitingList = waitingList.filter(
         (item) => item.uid !== uid && item.uid !== target.uid
       ); // 대기열 삭제
+      socket.emit("match_start");
     }
+    console.log("접속 유저 수: ", waitingList.length);
     socket.emit("matching", "매칭중...");
   });
 
@@ -77,17 +82,13 @@ io.on("connection", (socket) => {
     socket.join(target_uid);
   });
 
-  socket.on("join_room", (roomName) => {
-    socket.join(roomName);
-    io.to(roomName).emit("welcome");
-  });
-
   socket.on("offer", (offer, uid, target_uid) => {
     socket.to(target_uid).emit("offer", offer);
   });
 
   socket.on("answer", (answer, uid, targetUid) => {
     // io.to(targetUid).emit("answer", answer);
+    console.log("앤썰에서 ", targetUid);
     socket.to(targetUid).emit("answer", answer);
   });
 
