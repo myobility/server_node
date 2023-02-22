@@ -33,8 +33,11 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
   socket.on("matching", (uid, location) => {
+    //다중접속 방지
+    if (waitingList.filter((e) => e.socketId === socket.id).length) return;
+
     waitingList.push({ uid: uid, socketId: socket.id, location: location });
-    // console.log(waitingList);
+
     const target = matchingUser(uid, location);
 
     if (!target) {
@@ -49,7 +52,9 @@ io.on("connection", (socket) => {
       waitingList = waitingList.filter(
         (item) => item.uid !== uid && item.uid !== target.uid
       ); // 대기열 삭제
+      socket.emit("match_start");
     }
+    console.log("접속 유저 수: ", waitingList.length);
     socket.emit("matching", "매칭중...");
   });
 
