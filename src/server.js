@@ -25,8 +25,8 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
-    // origin: "http://localhost:5173", //로컬 테스트용
+    // origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
+    origin: "http://localhost:5173", //로컬 테스트용
     credentials: true,
   },
 });
@@ -80,11 +80,6 @@ io.on("connection", (socket) => {
     console.log("welcome to ", target_uid);
     socket.to(target_uid).emit("welcome", target_uid);
     socket.join(target_uid);
-  });
-
-  socket.on("join_room", (roomName) => {
-    socket.join(roomName);
-    io.to(roomName).emit("welcome");
   });
 
   socket.on("offer", (offer, uid, target_uid) => {
