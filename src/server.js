@@ -88,6 +88,7 @@ io.on("connection", (socket) => {
 
   socket.on("answer", (answer, uid, targetUid) => {
     // io.to(targetUid).emit("answer", answer);
+    console.log("앤썰에서 ", targetUid);
     socket.to(targetUid).emit("answer", answer);
   });
 
