@@ -93,6 +93,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ice", (ice, uid, targetUid) => {
+    console.log("아이스에서 ", targetUid);
     socket.to(targetUid).emit("ice", ice);
     // socket.emit("ice", ice);
   });
