@@ -25,8 +25,8 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
-    // origin: "http://localhost:5173", //로컬 테스트용
+    // origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
+    origin: "http://localhost:5173", //로컬 테스트용
     credentials: true,
   },
 });
@@ -37,10 +37,10 @@ io.on("connection", (socket) => {
     // console.log(waitingList);
     const target = matchingUser(uid, location);
 
-    if (target) {
+    if (!target) {
       socket.join(uid);
       console.log("UID: ", uid);
-      socket.emit("matched", uid);
+      // socket.emit("matched", uid);
     } else {
       console.log(location);
       socket.emit("matched", target.uid);
