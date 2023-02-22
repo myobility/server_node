@@ -25,8 +25,8 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
-    // origin: "http://localhost:5173", //로컬 테스트용
+    // origin: "https://web-client-luj2cle9ghnxl.sel3.cloudtype.app",
+    origin: "http://localhost:5173", //로컬 테스트용
     credentials: true,
   },
 });
